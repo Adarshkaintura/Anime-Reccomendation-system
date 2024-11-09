@@ -31,18 +31,30 @@ X = np.array(t)
 # Streamlit UI
 st.title("Anime Recommendation System")
 
-# Input for anime user likes and number of recommendations
-user_input = st.text_input('Enter the anime you like, and we will find more like those for you:')
+# Auto-suggestion for anime name
+anime_names = data['name'].values
+suggestions = []
+
+user_input = st.text_input('Enter the anime you like, and we will find more like those for you:', '')
+
+# Filter suggestions based on user input
+if user_input:
+    suggestions = [anime for anime in anime_names if user_input.lower() in anime.lower()]
+
+# Display suggestions in a selectbox for better user experience
+selected_anime = st.selectbox('Select an anime from suggestions:', suggestions)
+
+# Input for number of recommendations
 num_recommendations = st.number_input('Please enter the number of recommendations you want:', min_value=1, max_value=10, value=5)
 
-# Convert user input to lowercase for comparison
-user_input = user_input.lower()
+# Convert selected anime to lowercase for comparison
+selected_anime = selected_anime.lower()
 
 # Find the anime in the dataset
 name = data['name'].values
 h = -1
 for i in range(len(name)):
-    if user_input in name[i].lower():
+    if selected_anime in name[i].lower():
         h = i
         break
 
