@@ -35,20 +35,26 @@ st.title("Anime Recommendation System")
 anime_names = data['name'].values
 suggestions = []
 
+# Text input with auto-suggestions
 user_input = st.text_input('Enter the anime you like, and we will find more like those for you:', '')
 
-# Filter suggestions based on user input
+# Generate suggestions based on the user input
 if user_input:
     suggestions = [anime for anime in anime_names if user_input.lower() in anime.lower()]
 
-# Display suggestions in a selectbox for better user experience
-selected_anime = st.selectbox('Select an anime from suggestions:', suggestions)
+# Display suggestions live below the text input
+if suggestions:
+    st.write("Suggestions:")
+    for suggestion in suggestions:
+        st.write(suggestion)
 
 # Input for number of recommendations
 num_recommendations = st.number_input('Please enter the number of recommendations you want:', min_value=1, max_value=10, value=5)
 
-# Convert selected anime to lowercase for comparison
-selected_anime = selected_anime.lower()
+# Check if the user selected a valid anime from suggestions
+selected_anime = ''
+if user_input and suggestions:
+    selected_anime = suggestions[0].lower()  # Just select the first suggestion for simplicity
 
 # Find the anime in the dataset
 name = data['name'].values
