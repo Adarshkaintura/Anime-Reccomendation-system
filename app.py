@@ -1,19 +1,15 @@
-import streamlit as st
 import numpy as np
 import pandas as pd
+import streamlit as st
+from gtts import gTTS
 from scipy.spatial import distance
-import pyttsx3
-from sklearn.cluster import KMeans
-import matplotlib.pyplot as plt
-import seaborn as sns
+from io import BytesIO
 
-# Load the data
+# Load your dataset
 data = pd.read_csv('anime.csv')
+data = data[data['genre'] != 'Hentai']  # Filter out unwanted genres
 
-# Clean the data by removing 'Hentai' genre
-data = data[data['genre'] != 'Hentai']
-
-# Generate genre list
+# Prepare the genre list and convert it to a feature matrix
 genre = data['genre'].values
 lis = []
 for i in genre:
@@ -22,7 +18,6 @@ for i in genre:
         if p not in lis:
             lis.append(p)
 
-# Initialize dictionary for genre count
 dic = {}
 t = []
 for i in genre:
@@ -35,53 +30,58 @@ for i in genre:
 
 X = np.array(t)
 
-# Streamlit interface
+# Function to convert text to speech using gTTS and return as BytesIO
+def speak(text):
+    tts = gTTS(text=text, lang='en')
+    audio_buffer = BytesIO()
+    tts.save(audio_buffer)
+    audio_buffer.seek(0)  # Go back to the beginning of the buffer
+    return audio_buffer
+
+# Streamlit UI
 st.title("Anime Recommendation System")
 
-# User input for anime preference and number of recommendations
-s = st.text_input('Enter the anime you like:')
-num = st.number_input('Please enter the number of recommendations you want:', min_value=1, max_value=10, value=5)
+# Input for anime user likes and number of recommendations
+user_input = st.text_input('Enter the anime you like, and we will find more like those for you:')
+num_recommendations = st.number_input('Please enter the number of recommendations you want:', min_value=1, max_value=10, value=5)
 
-# Text-to-Speech initialization
-engine = pyttsx3.init()
+# Convert user input to lowercase for comparison
+user_input = user_input.lower()
 
-# Recommendations logic
-if s:
-    s = s.lower()
-    name = data['name'].values
-    h = -1
-    for i in range(len(name)):
-        name[i] = name[i].lower()
-        if s in name[i]:
-            h = i
-            break
+# Find the anime in the dataset
+name = data['name'].values
+h = -1
+for i in range(len(name)):
+    if user_input in name[i].lower():
+        h = i
+        break
 
-    imp = []
-    if h == -1:
-        st.write('Sorry, no match found :(')
-        engine.say("Sorry, no match found")
-        engine.runAndWait()
-    else:
-        for i in range(len(t)):
-            if i == h:
-                continue
+imp = []
+if h == -1:
+    st.write('Sorry, no match found :(')
+else:
+    for i in range(len(t)):
+        if i == h:
+            continue
+        else:
+            if len(imp) < num_recommendations:
+                imp.append([distance.euclidean(t[i], t[h]), t[i], i])
             else:
-                if len(imp) < num:
+                imp.sort()
+                if imp[num_recommendations - 1][0] > distance.euclidean(t[i], t[h]):
+                    del imp[num_recommendations - 1]
                     imp.append([distance.euclidean(t[i], t[h]), t[i], i])
-                else:
-                    imp.sort()
-                    if imp[num - 1][0] > distance.euclidean(t[i], t[h]):
-                        del imp[num - 1]
-                        imp.append([distance.euclidean(t[i], t[h]), t[i], i])
 
-        st.write('The anime recommended for you are:')
-        count = 0
-        for i in imp:
-            count += 1
-            recommended_anime = name[i[2]]
-            st.write(f"{count}. {recommended_anime}")
+    # Display the recommendations
+    st.write('The anime recommended for you are:')
+    count = 0
+    for i in imp:
+        count += 1
+        recommended_anime = name[i[2]]
+        st.write(f"Recommendation {count}: {recommended_anime}")
 
-            # Text-to-Speech for the recommendations
-            engine.say(f"Recommendation {count}: {recommended_anime}")
-            engine.runAndWait()
+        # Generate the audio for the recommendation
+        audio_buffer = speak(f"Recommendation {count}: {recommended_anime}")
 
+        # Play the audio buffer in the Streamlit app
+        st.audio(audio_buffer, format="audio/mp3")
