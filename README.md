@@ -1,7 +1,9 @@
 # Anime Recommendation System
+## Deployment
 
-###  "Deployed Link" section:
-- `[https://anime-reccomendation-system-vfnfx7cawrsgdsiuoebrg5.streamlit.app/]` .
+You can view and interact with the deployed project by clicking the link below:
+
+[View Deployed Project](https://anime-reccomendation-system-vfnfx7cawrsgdsiuoebrg5.streamlit.app/)
 This is a simple Anime Recommendation System built using Streamlit. The system allows users to input the name of an anime they like and the number of recommendations they want. Based on the input, the system will suggest similar anime based on genre similarity.
 
 ## Features:
