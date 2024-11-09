@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
-from gtts import gTTS
 from scipy.spatial import distance
-from io import BytesIO
 
 # Load your dataset
 data = pd.read_csv('anime.csv')
@@ -29,14 +27,6 @@ for i in genre:
     t.append(list(dic.values()))
 
 X = np.array(t)
-
-# Function to convert text to speech using gTTS and return as BytesIO
-def speak(text):
-    tts = gTTS(text=text, lang='en')
-    audio_buffer = BytesIO()
-    tts.save(audio_buffer)
-    audio_buffer.seek(0)  # Go back to the beginning of the buffer
-    return audio_buffer
 
 # Streamlit UI
 st.title("Anime Recommendation System")
@@ -79,9 +69,3 @@ else:
         count += 1
         recommended_anime = name[i[2]]
         st.write(f"Recommendation {count}: {recommended_anime}")
-
-        # Generate the audio for the recommendation
-        audio_buffer = speak(f"Recommendation {count}: {recommended_anime}")
-
-        # Play the audio buffer in the Streamlit app
-        st.audio(audio_buffer, format="audio/mp3")
