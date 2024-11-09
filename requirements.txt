@@ -2,7 +2,6 @@ streamlit
 pandas
 pyttsx3
 scipy
-sklearn
 matplotlib
 seaborn
 scikit-learn
