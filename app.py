@@ -31,59 +31,43 @@ X = np.array(t)
 # Streamlit UI
 st.title("Anime Recommendation System")
 
-# Auto-suggestion for anime name
-anime_names = data['name'].values
-suggestions = []
-
-# Text input with auto-suggestions
-user_input = st.text_input('Enter the anime you like, and we will find more like those for you:', '')
-
-# Generate suggestions based on the user input
-if user_input:
-    suggestions = [anime for anime in anime_names if user_input.lower() in anime.lower()]
-
-# Display suggestions live below the text input
-if suggestions:
-    st.write("Suggestions:")
-    for suggestion in suggestions:
-        st.write(suggestion)
-
-# Input for number of recommendations
+# User input for anime name and number of recommendations
+user_input = st.text_input('Enter the anime you like:', '')
 num_recommendations = st.number_input('Please enter the number of recommendations you want:', min_value=1, max_value=10, value=5)
 
-# Check if the user selected a valid anime from suggestions
-selected_anime = ''
-if user_input and suggestions:
-    selected_anime = suggestions[0].lower()  # Just select the first suggestion for simplicity
+# If user inputs anime name and number of recommendations
+if user_input:
+    anime_names = data['name'].values
+    name = data['name'].values
+    h = -1
+    
+    # Find the anime in the dataset
+    for i in range(len(name)):
+        if user_input.lower() in name[i].lower():
+            h = i
+            break
 
-# Find the anime in the dataset
-name = data['name'].values
-h = -1
-for i in range(len(name)):
-    if selected_anime in name[i].lower():
-        h = i
-        break
-
-imp = []
-if h == -1:
-    st.write('Sorry, no match found :(')
-else:
-    for i in range(len(t)):
-        if i == h:
-            continue
-        else:
-            if len(imp) < num_recommendations:
-                imp.append([distance.euclidean(t[i], t[h]), t[i], i])
+    imp = []
+    if h == -1:
+        st.write('Sorry, no match found :(')
+    else:
+        # Find similar anime based on Euclidean distance
+        for i in range(len(t)):
+            if i == h:
+                continue
             else:
-                imp.sort()
-                if imp[num_recommendations - 1][0] > distance.euclidean(t[i], t[h]):
-                    del imp[num_recommendations - 1]
+                if len(imp) < num_recommendations:
                     imp.append([distance.euclidean(t[i], t[h]), t[i], i])
+                else:
+                    imp.sort()
+                    if imp[num_recommendations - 1][0] > distance.euclidean(t[i], t[h]):
+                        del imp[num_recommendations - 1]
+                        imp.append([distance.euclidean(t[i], t[h]), t[i], i])
 
-    # Display the recommendations
-    st.write('The anime recommended for you are:')
-    count = 0
-    for i in imp:
-        count += 1
-        recommended_anime = name[i[2]]
-        st.write(f"Recommendation {count}: {recommended_anime}")
+        # Display the recommendations
+        st.write('The anime recommended for you are:')
+        count = 0
+        for i in imp:
+            count += 1
+            recommended_anime = name[i[2]]
+            st.write(f"Recommendation {count}: {recommended_anime}")
