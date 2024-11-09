@@ -1,52 +1,30 @@
-# 🌟 Anime Recommendation System 🎬
+# Anime Recommendation System
 
-Welcome to the Anime Recommendation System! Find anime similar to your favorites with just a few clicks! 🚀
+###  "Deployed Link" section:
+- `[https://anime-reccomendation-system-vfnfx7cawrsgdsiuoebrg5.streamlit.app/]` .
+This is a simple Anime Recommendation System built using Streamlit. The system allows users to input the name of an anime they like and the number of recommendations they want. Based on the input, the system will suggest similar anime based on genre similarity.
 
-## 🚀 Getting Started
+## Features:
+- **User Input**: The user types the name of an anime and the number of recommendations they want.
+- **Recommendation**: The system will recommend anime based on the genre similarity using **Euclidean distance**.
+- **Output**: Displays the recommended anime list.
 
-### Prerequisites
+## ML Algorithm Used:
+The system uses **Euclidean distance** to measure the similarity between the input anime's genre and others in the dataset. While no explicit machine learning algorithm like K-Means clustering is used in this version, the system still makes recommendations based on genre features.
 
-Ensure you have the following installed:
-- Python 3
-- Pandas
-- NumPy
-- pyttsx3
-- scipy
+## How It Works:
+1. **User Input**: The user inputs an anime name and the number of recommendations they want.
+2. **Similarity Calculation**: The system calculates the **Euclidean distance** between the genre features of the given anime and other anime in the dataset.
+3. **Recommendation**: The system recommends anime with the smallest Euclidean distance (most similar).
 
-### Installation
+## Technologies Used:
+- **Streamlit**: For building the interactive web app.
+- **Pandas**: For data manipulation and handling the dataset.
+- **NumPy**: For handling numerical operations.
+- **SciPy**: For calculating Euclidean distance between anime genre features.
 
-1. Clone this repository to your local machine.
-
-   ```sh
-   git clone https://github.com/yourusername/anime-recommendation-system.git
-Install the required Python packages using pip.
-pip install -r requirements.txt
-🎮 Usage
-
-    Have your anime dataset in CSV format ready. Make sure it includes at least the following columns:
-        name: Name of the anime
-        genre: Genre(s) of the anime (multiple genres separated by commas)
-
-    Run the recommend.py script.
-
-  python recommend.py  
-Enter the name of the anime you like when prompted.
-
-    Specify the number of recommendations you desire.
-
-    Voila! 🎉 The system will provide you with recommended anime based on genre similarity.
-
-🌟 Example
-
-Suppose you enter "Naruto" as the anime you like and specify 5 recommendations. The system will then output something like:
-The anime recommended for you are:
-1. Naruto Shippuden
-2. Bleach
-3. One Piece
-4. Dragon Ball Z
-5. Fairy Tail
-
-Additionally, the system will provide spoken recommendations using text-to-speech. 🎙️
-🤝 Contributing
-
-Contributions are welcome! If you'd like to improve this recommendation system, feel free to fork this repository and submit a pull request with your changes. 💡
+## How to Run:
+1. Clone the repository or download the code.
+2. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
